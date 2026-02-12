@@ -7,7 +7,7 @@ FRIENDS_FILE = "friends.json"
 class FriendManager:
 
     def __init__(self):
-        if not os.path.exists(FRIENDS_FILE):
+        if not os.path.exists(FRIENDS_FILE) or os.path.getsize(FRIENDS_FILE) == 0:
             with open(FRIENDS_FILE, "w") as f:
                 json.dump({}, f)
 
@@ -37,3 +37,4 @@ class FriendManager:
         print("\nFriends:")
         for code in data:
             print(f"- {code}")
+
