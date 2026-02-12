@@ -11,17 +11,28 @@ DEFAULT_PORT = 5555
 
 
 def load_config():
-    if not os.path.exists(CONFIG_FILE):
+    try:
+        # Try loading existing config
+        with open(CONFIG_FILE, "r") as f:
+            config = json.load(f)
+
+        # Validate required keys
+        if "name" in config and "friend_code" in config:
+            return config
+        else:
+            raise ValueError("Invalid config format")
+
+    except (FileNotFoundError, json.JSONDecodeError, ValueError):
+        # If file missing, empty, corrupted, or invalid → recreate it
         config = {
             "name": socket.gethostname(),
             "friend_code": generate_friend_code()
         }
+
         with open(CONFIG_FILE, "w") as f:
             json.dump(config, f, indent=4)
+
         return config
-    else:
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
 
 
 def chat_session(conn, addr):
@@ -86,6 +97,9 @@ def main():
     elif choice == "5":
         friend_manager.show_friends()
 
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()
